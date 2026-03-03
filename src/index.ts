@@ -22,13 +22,16 @@ app.get("/videos/:id", (req: Request, res: Response) => {
   res.status(200).send(video);
 });
 app.post("/videos", (req: Request, res: Response) => {
-  const { title, author, availableResolutions } = req.body;
+  const { title, author, availableResolutions, canBeDownloaded } = req.body;
   const errors: { field: string, message: string }[] = [];
   const validResolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"];
   if (!title || title.trim() === "" || title.length > 40) {
     errors.push({ field: "title", message: "Invalid title" });
   }
 
+  if (canBeDownloaded !== undefined && typeof canBeDownloaded !== "boolean") {
+    errors.push({ field: "canBeDownloaded", message: "Invalid canBeDownloaded" });
+  }
   if (!author || author.trim() === "" || author.length > 20) {
     errors.push({ field: "author", message: "Invalid author" });
   }
@@ -58,14 +61,16 @@ app.post("/videos", (req: Request, res: Response) => {
 });
 app.put("/videos/:id", (req: Request, res: Response) => {
   const video = db.videos.find(v => v.id === +req.params.id);
-  const { title, author, availableResolutions, canBeDownloaded, minAgeRestriction } = req.body;
+  const { title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate } = req.body;
   const errors: { field: string, message: string }[] = [];
 
   if (!video) {
     res.sendStatus(404);
     return;
   }
-
+  if (canBeDownloaded !== undefined && typeof canBeDownloaded !== "boolean") {
+    errors.push({ field: "canBeDownloaded", message: "Invalid canBeDownloaded" });
+  }
   if (!title || title.trim() === "" || title.length > 40) {
     errors.push({ field: "title", message: "Invalid title" });
   }
@@ -86,6 +91,7 @@ app.put("/videos/:id", (req: Request, res: Response) => {
   video.availableResolutions = availableResolutions ?? video.availableResolutions;
   video.canBeDownloaded = canBeDownloaded ?? video.canBeDownloaded;
   video.minAgeRestriction = minAgeRestriction ?? video.minAgeRestriction;
+  video.publicationDate = publicationDate ?? video.publicationDate;
 
   res.sendStatus(204);
 });
