@@ -7,6 +7,9 @@ const port = process.env.PORT || 5000
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello Samurai')
 })
+app.get("/videos", (req: Request, res: Response) => {
+        res.status(200).send(db.videos);
+    });
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`)
