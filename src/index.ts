@@ -80,7 +80,9 @@ app.put("/videos/:id", (req: Request, res: Response) => {
   if (!availableResolutions || !Array.isArray(availableResolutions) || availableResolutions.length === 0) {
     errors.push({ field: "availableResolutions", message: "Invalid resolutions" });
   }
-
+  if (minAgeRestriction !== null && (typeof minAgeRestriction !== "number" || minAgeRestriction < 1 || minAgeRestriction > 18)) {
+    errors.push({ field: "minAgeResriction", message: "Invalid minAgeRestriction" })
+  }
   if (errors.length > 0) {
     res.status(400).send({ errorsMessages: errors });
     return;
