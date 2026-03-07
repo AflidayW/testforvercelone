@@ -21,9 +21,9 @@ app.delete("/testing/all-data", (req: Request, res: Response) => {
   db.videos = [];
   res.sendStatus(204);
 });
-
+setupSwagger(app);
 app.listen(port, () => {
   console.log(`Server started on port ${port}`)
 });
-setupSwagger(app);
+
 export default app;
