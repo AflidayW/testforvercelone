@@ -8,7 +8,7 @@ export const videoRouter = Router();
 
 videoRouter
     .get("", (req: Request, res: Response) => {
-        res.status(200).send(db)
+        res.status(200).send(db.videos)
     })
 
     .get("/:id", (req: Request, res: Response) => {
@@ -22,7 +22,7 @@ videoRouter
         res.status(200).send(videoId);
     })
 
-    .post("/videos", (req: Request, res: Response) => {
+    .post("", (req: Request, res: Response) => {
         const { title, author, availableResolutions, canBeDownloaded } = req.body;
         const errors: { field: string, message: string }[] = [];
         const validResolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"];
@@ -61,7 +61,7 @@ videoRouter
         res.status(201).send(newVideo);
     })
 
-    .put("/videos/:id", (req: Request, res: Response) => {
+    .put("/:id", (req: Request, res: Response) => {
         const video = db.videos.find(v => v.id === +req.params.id);
         const { title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate } = req.body;
         const errors: { field: string, message: string }[] = [];
@@ -103,7 +103,7 @@ videoRouter
         res.sendStatus(204);
     })
 
-    .delete("/videos/:id", (req: Request, res: Response) => {
+    .delete("/:id", (req: Request, res: Response) => {
         const check = db.videos.find(v => v.id === +req.params.id);
 
         if (!check) {
