@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { db } from "../db";
 import { superAdminGuardMiddleware } from "../middlewares/auth";
 import { idValidation } from "../middlewares/Idvalidator"
-import { bodyValidation } from "../middlewares/bodyValidator"
+import { blogValidation } from "../middlewares/blogValidator"
 import { inputValidationResultMiddleware } from "../middlewares/MainValidator"
 
 export const blogsRouter = Router();
@@ -24,7 +24,7 @@ blogsRouter
         res.status(200).send(blog);
     })
 
-    .post("", superAdminGuardMiddleware, ...bodyValidation, inputValidationResultMiddleware, (req: Request, res: Response) => {
+    .post("", superAdminGuardMiddleware, ...blogValidation, inputValidationResultMiddleware, (req: Request, res: Response) => {
         const { name, description, websiteUrl } = req.body;
 
         const newBlog = {
@@ -40,7 +40,7 @@ blogsRouter
         res.status(201).send(newBlog);
     })
 
-    .put("/:id", superAdminGuardMiddleware, idValidation, ...bodyValidation, inputValidationResultMiddleware, (req: Request, res: Response) => {
+    .put("/:id", superAdminGuardMiddleware, idValidation, ...blogValidation, inputValidationResultMiddleware, (req: Request, res: Response) => {
         const blog = db.blogs.find(b => b.id === +req.params.id);
         const { name, description, websiteUrl } = req.body;
 
@@ -49,9 +49,9 @@ blogsRouter
             return;
         }
 
-        blog.name = name ?? blog.name;
-        blog.description = description ?? blog.description;
-        blog.websiteUrl = websiteUrl ?? blog.websiteUrl;
+        blog.name = name;
+        blog.description = description;
+        blog.websiteUrl = websiteUrl;
 
         res.sendStatus(204);
     })

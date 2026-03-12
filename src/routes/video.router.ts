@@ -12,14 +12,14 @@ videoRouter
     })
 
     .get("/:id", (req: Request, res: Response) => {
-        const videoId = db.videos.find(f_video => f_video.id === +req.params.id);
+        const video = db.videos.find(f_video => f_video.id === +req.params.id);
 
-        if (!videoId) {
+        if (!video) {
             res.status(404).send({ message: "Video Not Found" });
             return;
         }
 
-        res.status(200).send(videoId);
+        res.status(200).send(video);
     })
 
     .post("", (req: Request, res: Response) => {

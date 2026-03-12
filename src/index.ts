@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import { videoRouter } from './routes/video.router'
 import { setupSwagger } from './swagger'
 import { blogsRouter } from "./routes/blogs.router"
+import {postsRouter} from "./routes/posts.router"
 
 
 const app = express()
@@ -14,6 +15,7 @@ app.get('/', (req: Request, res: Response) => {
 })
 app.use("/videos", videoRouter)
 app.use("/blogs", blogsRouter)
+app.use("/posts", postsRouter)
 
 
 // 

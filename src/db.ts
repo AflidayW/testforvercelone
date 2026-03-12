@@ -20,7 +20,17 @@ type Blog = {
     isMembership: boolean;
 }
 
-export const db: { videos: Video[], blogs: Blog[] } = {
+type Posts = {
+    id: number;
+    blogId: number;
+    title: string,
+    content: string;
+    shortDescription: string;
+    createdAt: string;
+    blogName: string
+}
+
+export const db: { videos: Video[], blogs: Blog[], posts: Posts[] } = {
     videos: [{
         id: 1,
         title: "Fack",
@@ -39,5 +49,15 @@ export const db: { videos: Video[], blogs: Blog[] } = {
         websiteUrl: "https://localhost:5000",
         createdAt: new Date().toISOString(),
         isMembership: false
+    }],
+
+    posts: [{
+        id: 1,
+        blogId: 1,
+        title: "Fuck_Post",
+        content: "Fuck_post",
+        shortDescription: "Fuck_describtion",
+        createdAt: new Date().toISOString(),
+        blogName: "Fuck_Blog"
     }]
 }
