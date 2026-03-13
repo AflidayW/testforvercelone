@@ -19,7 +19,7 @@ type Blog = {
 }
 
 type Posts = {
-    id: number;
+    id: string;
     blogId: number;
     title: string,
     content: string;
@@ -48,7 +48,7 @@ export const db: { videos: Video[], blogs: Blog[], posts: Posts[] } = {
     }],
 
     posts: [{
-        id: 1,
+        id: "1",
         blogId: 1,
         title: "Fuck_Post",
         content: "Fuck_post",

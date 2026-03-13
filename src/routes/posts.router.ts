@@ -15,7 +15,7 @@ postsRouter
     })
 
     .get("/:id", idPostValidator, (req: Request, res: Response) => {
-        const post = db.posts.find(id => id.id === +req.params.id);
+        const post = db.posts.find(id => id.id === req.params.id);
 
         if (!post) {
             res.status(404).send({ message: "Post not Found" });
@@ -31,7 +31,7 @@ postsRouter
         const { title, shortDescription, content, blogId } = req.body;
 
         const newPost = {
-            id: db.posts.length ? db.posts[db.posts.length - 1].id + 1 : 1,
+            id: String(db.posts.length ? db.posts[db.posts.length - 1].id + 1 : 1),
             title,
             shortDescription,
             content,
@@ -46,7 +46,7 @@ postsRouter
 
 
     .put("/:id", superAdminGuardMiddleware, idPostValidator, ...postsValidation, inputValidationResultMiddleware, (req: Request, res: Response) => {
-        const post = db.posts.find(id => id.id === +req.params.id);
+        const post = db.posts.find(id => id.id === req.params.id);
         const { title, shortDescription, content, blogId } = req.body;
         if (!post) {
             res.status(404).send({ message: "Post not Found" });
@@ -70,13 +70,13 @@ postsRouter
 
 
     .delete("/:id", superAdminGuardMiddleware, idPostValidator, inputValidationResultMiddleware, (req: Request, res: Response) => {
-        const check = db.posts.find(b => b.id === +req.params.id);
+        const check = db.posts.find(b => b.id === req.params.id);
 
         if (!check) {
             res.sendStatus(404);
             return;
         }
 
-        db.posts = db.posts.filter(b => b.id !== +req.params.id);
+        db.posts = db.posts.filter(b => b.id !== req.params.id);
         res.sendStatus(204);
     });
