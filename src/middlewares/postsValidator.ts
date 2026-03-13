@@ -3,6 +3,7 @@ import { db } from "../db";
 export const postsValidation = [
 
     body("title")
+        .trim()
         .notEmpty().withMessage("Title is required")
         .isLength({ max: 30 }).withMessage("Name must be less than 15 characters"),
     body("shortDescription")
@@ -15,7 +16,7 @@ export const postsValidation = [
     body('blogId')
         .notEmpty().withMessage("Content is required")
         .custom(id => {
-            const blog = db.posts.find(ojbect => ojbect.id === + id);
+            const blog = db.blogs.find(ojbect => ojbect.id === id);
 
             if (!blog) throw new Error("Blog not found")
             return true
