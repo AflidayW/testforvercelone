@@ -1,6 +1,7 @@
 import { body } from 'express-validator';
 export const blogValidation = [
     body("name")
+        .trim()
         .notEmpty().withMessage("Name is required")
         .isLength({ max: 15 }).withMessage("Name must be less than 15 characters"),
     body("description")
