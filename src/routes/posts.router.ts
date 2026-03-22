@@ -36,7 +36,8 @@ postsRouter
             shortDescription,
             content,
             blogId,
-            blogName: blogName!.name
+            blogName: blogName!.name,
+            createdAt: new Date().toISOString()
         }
         await db.collection("Posts").insertOne(newPost);
         const { _id, ...PostWithoutId } = newPost as any;
