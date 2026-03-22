@@ -38,7 +38,8 @@ blogsRouter
         };
 
         await db.collection("Blogs").insertOne(newBlog)
-        res.status(201).send(newBlog);
+        const { _id, ...BlogWithoutId } = newBlog as any;
+        res.status(201).send(BlogWithoutId);
     })
 
     .put("/:id", superAdminGuardMiddleware, idBlogValidation, ...blogValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {

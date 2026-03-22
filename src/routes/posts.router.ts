@@ -39,7 +39,8 @@ postsRouter
             blogName: blogName!.name
         }
         await db.collection("Posts").insertOne(newPost);
-        res.status(201).send(newPost);
+        const { _id, ...PostWithoutId } = newPost as any;
+        res.status(201).send(PostWithoutId);
     })
 
 
