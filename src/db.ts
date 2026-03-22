@@ -4,7 +4,7 @@ import { Collection, Db, MongoClient } from 'mongodb';
 
 const mongoUri = "mongodb+srv://admin:12345@incubator.gje1g5d.mongodb.net/?appName=Incubator";
 
-const dbName = "Incubetor";
+const dbName = "Incubator";
 
 export let db: Db;
 export const client = new MongoClient(mongoUri);
