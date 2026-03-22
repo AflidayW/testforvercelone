@@ -29,14 +29,14 @@ postsRouter
     )
     .post("", superAdminGuardMiddleware, ...postsValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
         const { title, shortDescription, content, blogId } = req.body;
-
+        const blogName = await db.collection("Blogs").findOne({ id: blogId }, { projection: { _id: 0 } });
         const newPost = {
             id: String(Date.now()),
             title,
             shortDescription,
             content,
             blogId,
-            blogName: await db.collection("Blogs").findOne({ id: blogId },{ projection: { _id: 0 } })
+            blogName: blogName!.name
         }
         await db.collection("Posts").insertOne(newPost);
         res.status(201).send(newPost);
