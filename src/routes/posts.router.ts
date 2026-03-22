@@ -53,7 +53,7 @@ postsRouter
 
         const blog = await db.collection("Blogs").findOne({ id: blogId },{ projection: { _id: 0 } });
 
-        await db.collection("Posts").updateOne({ id: blogId }, {
+        await db.collection("Posts").updateOne({ id: req.params.id }, {
             $set: { title, shortDescription, content, blogId, blogName: blog!.name }
         })
 
