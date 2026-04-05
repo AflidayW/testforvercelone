@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { db } from "../db";
-export const idBlogValidation =async (req: Request, res: Response, next: NextFunction) => {
+export const idBlogValidation = async (req: Request, res: Response, next: NextFunction) => {
 
     const id = await db.collection("Blogs").findOne({ id: req.params.id })
 

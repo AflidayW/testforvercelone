@@ -5,17 +5,20 @@ import { idBlogValidation } from "../middlewares/IdBlogvalidator"
 import { blogValidation } from "../middlewares/blogValidator"
 import { inputValidationResultMiddleware } from "../middlewares/MainValidator"
 import { productRepository } from "../routes/product-repository"
+import { postsValidation } from "../middlewares/postsValidator";
+
+import { PaginationValidation } from "../middlewares/Pagination";
 
 export const blogsRouter = Router();
 
 
 blogsRouter
-    .get("", async (req: Request, res: Response) => {
-        const blogs = await productRepository.findAllBlogs();;
+    .get("", PaginationValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
+        const blogs = await productRepository.findAllBlogs(req);;
         res.status(200).send(blogs)
     })
 
-    .get("/:id", idBlogValidation, async (req: Request, res: Response) => {
+    .get("/:id", idBlogValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
         const blog = await productRepository.findOneBlog(req);
 
         if (!blog) {
@@ -24,6 +27,12 @@ blogsRouter
         }
 
         res.status(200).send(blog);
+    })
+
+    .get("/:id/posts", idBlogValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
+        const Posts = await productRepository.GetPostsFromBlog(req);
+
+        res.status(200).send(Posts)
     })
 
     .post("", superAdminGuardMiddleware, ...blogValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
@@ -46,6 +55,13 @@ blogsRouter
         res.status(201).send(newBlog)
     })
 
+    .post("/:id/posts", superAdminGuardMiddleware, idBlogValidation, ...postsValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
+        const newPost = await productRepository.CreatePostForBlog(req);
+
+        res.status(201).send(newPost)
+    })
+
+
     .put("/:id", superAdminGuardMiddleware, idBlogValidation, ...blogValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
 
         // const { name, description, websiteUrl } = req.body;
@@ -57,11 +73,11 @@ blogsRouter
         // await db.collection("Blogs").updateOne({ id: req.params.id }, {
         //     $set: { name, description, websiteUrl }
         // })
-        const blog = productRepository.findOneBlog(req);
-        if (!blog) {
-            res.sendStatus(404);
-            return;
-        }
+        // const blog = productRepository.findOneBlog(req);
+        // if (!blog) {
+        //     res.sendStatus(404);
+        //     return;
+        // }
         await productRepository.UpdateBlog(req)
         res.sendStatus(204);
     })

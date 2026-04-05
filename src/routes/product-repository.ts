@@ -9,12 +9,34 @@ export type Blog = {
     isMembership: boolean
 }
 
+export type Post = {
+    id: string,
+    title: string,
+    shortDescription: string,
+    content: string,
+    blogId: string,
+    blogName: string,
+    createdAt: string
+}
+
 export const productRepository = {
 
-    async findAllBlogs(): Promise<Blog[]> {
-        const FoundedBlogs = await db.collection<Blog>("Blogs").find({}, { projection: { _id: 0 } }).toArray();
-        return FoundedBlogs;
+    async findAllBlogs(req: Request): Promise<{ FoundedBlogs: Blog[], totalCount: number, pagesCount: number, page: number, PageSize: number }> {
+        const PageSize = Number(req.query.pageSize || 10);
+        const PageNumber = Number(req.query.pageNumber || 1);
 
+
+        const FoundedBlogs = await db.collection<Blog>("Blogs").find({}, { projection: { _id: 0 } }).skip((PageNumber - 1) * PageSize).limit(PageSize).toArray();
+
+        const totalCount = await db.collection<Blog>("Blogs").countDocuments({})
+
+        return {
+            FoundedBlogs,
+            totalCount,
+            pagesCount: Math.ceil(totalCount / PageSize),
+            page: PageNumber,
+            PageSize
+        }
     },
 
     async findOneBlog(req: Request): Promise<Blog | null> {
@@ -46,6 +68,61 @@ export const productRepository = {
         const Result = await db.collection("Blogs").deleteOne({ id: req.params.id });
 
         return Result.deletedCount
+
+    },
+
+    async CreatePostforPosts(req: Request): Promise<Post> {
+        const { title, shortDescription, content, blogId } = req.body;
+
+        const Blog_post = await db.collection("Blogs").findOne({ id: blogId }, { projection: { _id: 0 } });
+
+        const newPost: Post = {
+            id: String(Date.now()),
+            title,
+            shortDescription,
+            content,
+            blogId,
+            blogName: Blog_post!.name,
+            createdAt: new Date().toISOString()
+        };
+
+        await db.collection("Posts").insertOne(newPost)
+        return newPost;
+
+    },
+    async CreatePostForBlog(req: Request): Promise<Post> {
+        const { title, shortDescription, content } = req.body;
+
+        const blogId = req.params.id;
+
+        const Blog_post = await db.collection("Blogs").findOne({ id: blogId }, { projection: { _id: 0 } });
+
+        const newPost: Post = {
+            id: String(Date.now()),
+            title,
+            shortDescription,
+            content,
+            blogId,
+            blogName: Blog_post!.name,
+            createdAt: new Date().toISOString()
+        };
+
+        await db.collection("Posts").insertOne(newPost)
+        return newPost;
+
+    },
+
+    async GetPostsFromBlog(req: Request): Promise<{ lists_of_Posts: Post[], totalCount: number, pagesCount: number, page: number, PageSize: number }> {
+        const blogId = req.params.id;
+
+        const PageSize = Number(req.query.pageSize || 10);
+
+        const PageNumber = Number(req.query.pageNumber || 1);
+
+        const lists_of_Posts = await db.collection<Post>("Posts").find({ blogId: blogId }, { projection: { _id: 0 } }).skip((PageNumber - 1) * PageSize).limit(PageSize).toArray()
+
+        const totalCount = await db.collection<Post>("Posts").countDocuments({})
+        return { lists_of_Posts, totalCount, pagesCount: Math.ceil(totalCount / PageSize), page: PageNumber, PageSize };
 
     }
 }

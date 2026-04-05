@@ -4,17 +4,26 @@ import { superAdminGuardMiddleware } from "../middlewares/auth";
 import { idPostValidator } from "../middlewares/idPostValidator"
 import { postsValidation } from "../middlewares/postsValidator"
 import { inputValidationResultMiddleware } from "../middlewares/MainValidator"
+import { idBlogValidation } from "../middlewares/IdBlogvalidator";
+import { productRepository, Post } from "./product-repository";
+
+import { PaginationValidation } from "../middlewares/Pagination"
+
 
 export const postsRouter = Router();
 
 postsRouter
-    .get("", async (req: Request, res: Response) => {
-        const posts = await db.collection("Posts").find({},{ projection: { _id: 0 } }).toArray();
+    .get("", PaginationValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
+        const PageSize = Number(req.query.pageSize || 10);
+
+        const PageNumber = Number(req.query.pageNumber || 1);
+
+        const posts = await db.collection("Posts").find({}, { projection: { _id: 0 } }).skip((PageNumber - 1) * PageSize).limit(PageSize).toArray();
         res.status(200).send(posts);
 
     })
 
-    .get("/:id", idPostValidator, async (req: Request, res: Response) => {
+    .get("/:id", idPostValidator, inputValidationResultMiddleware, async (req: Request, res: Response) => {
         const post = await db.collection("Posts").findOne({ id: req.params.id },{ projection: { _id: 0 } });
 
         if (!post) {
@@ -28,20 +37,19 @@ postsRouter
 
     )
     .post("", superAdminGuardMiddleware, ...postsValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
-        const { title, shortDescription, content, blogId } = req.body;
-        const blogName = await db.collection("Blogs").findOne({ id: blogId }, { projection: { _id: 0 } });
-        const newPost = {
-            id: String(Date.now()),
-            title,
-            shortDescription,
-            content,
-            blogId,
-            blogName: blogName!.name,
-            createdAt: new Date().toISOString()
-        }
-        await db.collection("Posts").insertOne(newPost);
-        const { _id, ...PostWithoutId } = newPost as any;
-        res.status(201).send(PostWithoutId);
+        // const { title, shortDescription, content, blogId } = req.body;
+        // const blogName = await db.collection("Blogs").findOne({ id: blogId }, { projection: { _id: 0 } });
+        // const newPost = {
+        //     id: String(Date.now()),
+        //     title,
+        //     shortDescription,
+        //     content,
+        //     blogId,
+        //     blogName: blogName!.name,
+        //     createdAt: new Date().toISOString()
+        // }
+        const newPost = productRepository.CreatePostforPosts(req);
+        res.status(201).send(newPost);
     })
 
 
