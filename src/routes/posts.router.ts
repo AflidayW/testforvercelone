@@ -13,7 +13,7 @@ import { PaginationValidation } from "../middlewares/Pagination"
 export const postsRouter = Router();
 
 postsRouter
-    .get("", PaginationValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
+    .get("", PaginationValidation(), inputValidationResultMiddleware, async (req: Request, res: Response) => {
         const PageSize = Number(req.query.pageSize || 10);
 
         const PageNumber = Number(req.query.pageNumber || 1);
@@ -48,7 +48,7 @@ postsRouter
         //     blogName: blogName!.name,
         //     createdAt: new Date().toISOString()
         // }
-        const newPost = productRepository.CreatePostforPosts(req);
+        const newPost = await productRepository.CreatePostforPosts(req);
         res.status(201).send(newPost);
     })
 

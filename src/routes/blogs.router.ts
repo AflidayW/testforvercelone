@@ -13,7 +13,7 @@ export const blogsRouter = Router();
 
 
 blogsRouter
-    .get("", PaginationValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
+    .get("", PaginationValidation(), inputValidationResultMiddleware, async (req: Request, res: Response) => {
         const blogs = await productRepository.findAllBlogs(req);;
         res.status(200).send(blogs)
     })

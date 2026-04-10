@@ -95,7 +95,7 @@ export const productRepository = {
 
         const blogId = req.params.id;
 
-        const Blog_post = await db.collection("Blogs").findOne({ id: blogId }, { projection: { _id: 0 } });
+        const Blog_post = await db.collection("Blogs").findOne({ id: blogId });
 
         const newPost: Post = {
             id: String(Date.now()),
@@ -107,7 +107,8 @@ export const productRepository = {
             createdAt: new Date().toISOString()
         };
 
-        await db.collection("Posts").insertOne(newPost)
+
+        await db.collection<Post>("Posts").insertOne({ ...newPost })
         return newPost;
 
     },
