@@ -24,7 +24,7 @@ postsRouter
     })
 
     .get("/:id", idPostValidator, inputValidationResultMiddleware, async (req: Request, res: Response) => {
-        const post = await db.collection("Posts").findOne({ id: req.params.id },{ projection: { _id: 0 } });
+        const post = await db.collection("Posts").findOne({ id: req.params.id });
 
         if (!post) {
             res.status(404).send({ message: "Post not Found" });
@@ -61,10 +61,10 @@ postsRouter
             return;
         }
 
-        const blog = await db.collection("Blogs").findOne({ id: blogId },{ projection: { _id: 0 } });
+        const blog = await db.collection("Blogs").findOne({ id: blogId });
 
         await db.collection("Posts").updateOne({ id: req.params.id }, {
-            $set: { title, shortDescription, content, blogId, blogName: blog!.name }
+            $set: { _id: blog?._id, title, shortDescription, content, blogId, blogName: blog!.name }
         })
 
         res.sendStatus(204);
