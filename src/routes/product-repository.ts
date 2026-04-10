@@ -86,7 +86,7 @@ export const productRepository = {
             createdAt: new Date().toISOString()
         };
 
-        await db.collection("Posts").insertOne(newPost)
+        await db.collection("Posts").insertOne({ ...newPost })
         return newPost;
 
     },
