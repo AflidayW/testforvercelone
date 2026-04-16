@@ -26,7 +26,7 @@ export const productRepository = {
         const pageNumber = Number(req.query.pageNumber || 1);
 
         const sortBy = req.query.sortBy ? req.query.sortBy.toString() : "created_At";
-        const sortDirection = req.query.sortDirection === "asc" ? 1 : -1;
+        const sortDirection = req.query.sortDirection === "desc" ? -1 : 1;
 
         const items = await db.collection<Blog>("Blogs").find({}, { projection: { _id: 0 } }).sort({ [sortBy]: sortDirection }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray();
 
@@ -120,7 +120,7 @@ export const productRepository = {
         const blogId = req.params.id;
 
         const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt';
-        const sortDirection = req.query.sortDirection === 'asc' ? 1 : -1; // 'desc' -> -1, 'asc' -> 1
+        const sortDirection = req.query.sortDirection === 'desc' ? -1 : 1; // 'desc' -> -1, 'asc' -> 1
 
         const pageSize = Number(req.query.pageSize || 10);
         const pageNumber = Number(req.query.pageNumber || 1);

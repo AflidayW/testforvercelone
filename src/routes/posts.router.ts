@@ -19,7 +19,10 @@ postsRouter
 
         const PageNumber = Number(req.query.pageNumber || 1);
 
-        const posts = await db.collection("Posts").find({}, { projection: { _id: 0 } }).skip((PageNumber - 1) * PageSize).limit(PageSize).toArray();
+        const sortBy = req.query.sortBy ? req.query.sortBy.toString() : "created_At";
+        const sortDirection = req.query.sortDirection === "desk" ? -1 : 1;
+
+        const posts = await db.collection("Posts").find({}, { projection: { _id: 0 } }).sort({ [sortBy]: sortDirection }).skip((PageNumber - 1) * PageSize).limit(PageSize).toArray();
         res.status(200).send(posts);
 
     })
