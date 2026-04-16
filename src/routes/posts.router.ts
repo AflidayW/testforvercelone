@@ -6,6 +6,7 @@ import { postsValidation } from "../middlewares/postsValidator"
 import { inputValidationResultMiddleware } from "../middlewares/MainValidator"
 import { idBlogValidation } from "../middlewares/IdBlogvalidator";
 import { productRepository, Post } from "./product-repository";
+import { sortValidator } from "../middlewares/sortvalidation";
 
 import { PaginationValidation } from "../middlewares/Pagination"
 
@@ -13,7 +14,7 @@ import { PaginationValidation } from "../middlewares/Pagination"
 export const postsRouter = Router();
 
 postsRouter
-    .get("", PaginationValidation(), inputValidationResultMiddleware, async (req: Request, res: Response) => {
+    .get("", PaginationValidation(), ...sortValidator, inputValidationResultMiddleware, async (req: Request, res: Response) => {
         const PageSize = Number(req.query.pageSize || 10);
 
         const PageNumber = Number(req.query.pageNumber || 1);
@@ -54,8 +55,10 @@ postsRouter
 
 
     .put("/:id", superAdminGuardMiddleware, idPostValidator, ...postsValidation, inputValidationResultMiddleware, async (req: Request, res: Response) => {
-        const post = await db.collection("Posts").findOne({ id: req.params.id },{ projection: { _id: 0 } });
-        const { title, shortDescription, content, blogId } = req.body;
+        try {
+            const post = await db.collection("Posts").findOne({ id: req.params.id }, { projection: { _id: 0 } });
+            const { title, shortDescription, content, blogId } = req.body;
+
         if (!post) {
             res.status(404).send({ message: "Post not Found" });
             return;
@@ -68,6 +71,11 @@ postsRouter
         })
 
         res.sendStatus(204);
+
+        }
+        catch (e) {
+            res.status(500).send({ message: "Server Error" })
+        }
 
     })
 
