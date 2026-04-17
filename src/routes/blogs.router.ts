@@ -8,6 +8,7 @@ import { productRepository } from "../routes/product-repository"
 import { postsValidation } from "../middlewares/postsValidator";
 import { blogSortValidator } from "../middlewares/SortBlogValidator"
 import { PaginationValidation } from "../middlewares/Pagination";
+import { postSortValidator } from "../middlewares/PostSortValidator";
 
 export const blogsRouter = Router();
 
@@ -29,7 +30,7 @@ blogsRouter
         res.status(200).send(blog);
     })
 
-    .get("/:id/posts", idBlogValidation,...blogSortValidator, inputValidationResultMiddleware, async (req: Request, res: Response) => {
+    .get("/:id/posts", idBlogValidation, ...postSortValidator, inputValidationResultMiddleware, async (req: Request, res: Response) => {
         const Posts = await productRepository.GetPostsFromBlog(req);
 
         res.status(200).send(Posts)
