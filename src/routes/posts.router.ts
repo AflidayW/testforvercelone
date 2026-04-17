@@ -6,7 +6,7 @@ import { postsValidation } from "../middlewares/postsValidator"
 import { inputValidationResultMiddleware } from "../middlewares/MainValidator"
 import { idBlogValidation } from "../middlewares/IdBlogvalidator";
 import { productRepository, Post } from "./product-repository";
-import { sortValidator } from "../middlewares/sortvalidation";
+import { postSortValidator } from "../middlewares/PostSortValidator"
 
 import { PaginationValidation } from "../middlewares/Pagination"
 
@@ -14,7 +14,7 @@ import { PaginationValidation } from "../middlewares/Pagination"
 export const postsRouter = Router();
 
 postsRouter
-    .get("", PaginationValidation(), ...sortValidator, inputValidationResultMiddleware, async (req: Request, res: Response) => {
+    .get("", PaginationValidation(), ...postSortValidator, inputValidationResultMiddleware, async (req: Request, res: Response) => {
         const posts = await productRepository.findAllPosts(req);
         res.status(200).send(posts);
 
